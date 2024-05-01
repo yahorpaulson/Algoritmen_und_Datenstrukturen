@@ -45,11 +45,60 @@ public class Ab1Impl implements Ab1 {
 
 	@Override
 	public void quickSortStable(Integer[] data) {
+		IndexedValue[] indexedArray = new IndexedValue[data.length];
+		for (int i = 0; i < data.length; i++) {
+			indexedArray[i] = new IndexedValue(data[i], i);
+		}
 
+		quickSort(indexedArray, 0, indexedArray.length - 1);
+
+		for (int i = 0; i < indexedArray.length; i++) {
+			data[i] = indexedArray[i].value;
+		}
 	}
 
 	@Override
 	public int[][] mult(int[][] m1, int[][] m2) {
 		return new int[0][];
+	}
+	private int partition(IndexedValue[] data, int low, int high) {
+		IndexedValue pivot = data[high];
+		int i = low - 1;
+		for (int j = low; j < high; j++) {
+			if (data[j].compareTo(pivot) <= 0) {
+				i++;
+				IndexedValue temp = data[i];
+				data[i] = data[j];
+				data[j] = temp;
+			}
+		}
+		IndexedValue temp = data[i + 1];
+		data[i + 1] = data[high];
+		data[high] = temp;
+		return i + 1;
+	}
+	private void quickSort(IndexedValue[] data, int low, int high) {
+		if (low < high) {
+			int pivotIndex = partition(data, low, high);
+			quickSort(data, low, pivotIndex - 1);
+			quickSort(data, pivotIndex + 1, high);
+		}
+	}
+}
+
+class IndexedValue implements Comparable<IndexedValue> {
+	Integer value;
+	int index;
+
+	IndexedValue(Integer value, int index) {
+		this.value = value;
+		this.index = index;
+	}
+
+	@Override
+	public int compareTo(IndexedValue other) {
+		int valueCompare = this.value.compareTo(other.value);
+		if (valueCompare != 0) return valueCompare;
+		return Integer.compare(this.index, other.index);
 	}
 }
